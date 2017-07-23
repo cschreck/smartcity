@@ -17,7 +17,7 @@ public class User {
     public String name;
 
     @Property
-    String real_ID;
+    String realID;
 
     public User(){
 

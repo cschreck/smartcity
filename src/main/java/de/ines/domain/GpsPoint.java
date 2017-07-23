@@ -9,16 +9,16 @@ import org.neo4j.ogm.annotation.Relationship;
  * Created by Hambe on 11.07.2017.
  */
 @NodeEntity
-public class GPS_Plus {
+public class GpsPoint {
 
     @GraphId
     public Long id;
 
     @Relationship(type="Test", direction = Relationship.INCOMING)
-    public GPS_Plus lastPoint;
+    public GpsPoint lastPoint;
 
     @Relationship(type="Test", direction = Relationship.OUTGOING)
-    public GPS_Plus nextPoint;
+    public GpsPoint nextPoint;
 
     @Property
     public long date;
@@ -42,12 +42,11 @@ public class GPS_Plus {
     public int realID;
 
 
-
-    public GPS_Plus(){
+    public GpsPoint(){
 
     }
 
-    public GPS_Plus(GPS_Plus lastPoint, GPS_Plus nextPoint, int realID){
+    public GpsPoint(GpsPoint lastPoint, GpsPoint nextPoint, int realID){
         this.nextPoint = nextPoint;
         this.lastPoint = lastPoint;
         this.realID = realID;
