@@ -1,9 +1,7 @@
 package de.ines.domain;
 
-import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Property;
-import org.neo4j.ogm.annotation.Relationship;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.neo4j.ogm.annotation.*;
 
 /**
  * Created by Hambe on 11.07.2017.
@@ -14,11 +12,14 @@ public class GpsPoint {
     @GraphId
     public Long id;
 
-    @Relationship(type="Test", direction = Relationship.INCOMING)
+    @Relationship(type="lastPoint", direction = Relationship.INCOMING)
     public GpsPoint lastPoint;
 
-    @Relationship(type="Test", direction = Relationship.OUTGOING)
+    @Relationship(type="nextPoint", direction = Relationship.INCOMING)
     public GpsPoint nextPoint;
+
+    @Relationship(type="user", direction = Relationship.INCOMING)
+    public User user;
 
     @Property
     public long date;
@@ -38,7 +39,11 @@ public class GpsPoint {
     @Property
     public double acceleration;
 
+
+
+
     @Property
+    @Index
     public int realID;
 
 
@@ -50,5 +55,10 @@ public class GpsPoint {
         this.nextPoint = nextPoint;
         this.lastPoint = lastPoint;
         this.realID = realID;
+    }
+
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

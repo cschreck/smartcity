@@ -1,9 +1,13 @@
 package de.ines.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ines.domain.Route;
 import de.ines.services.GpsPointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 
 /**
  * Created by Hambe on 16.07.2017.
@@ -25,11 +29,9 @@ public class GpsPointController {
         return 10;
     }
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public void saveGPS_Plus(@RequestParam("route") Route route){
-        for(int i = 0; i < route.getRoute().size(); i++){
-            gpsPointService.saveGpsPoint(route.getRoute().get(i));
-        }
+    @RequestMapping(value = "/saveRoute", method = RequestMethod.POST)
+    public String saveRoute(@RequestBody String jsonRoute){
+        return gpsPointService.saveRoute(jsonRoute);
     }
 
 

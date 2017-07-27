@@ -13,5 +13,5 @@ import java.util.List;
  */
 @Repository
 public interface UserRepository extends Neo4jRepository<User, Long> {
-    List<User> findByName(@Param("name") String name);
+    User findByName(@Param("name") String name);
 }

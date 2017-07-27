@@ -1,5 +1,12 @@
 package de.ines.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Relationship;
+
 import java.util.ArrayList;
 
 /**
@@ -8,14 +15,22 @@ import java.util.ArrayList;
 
 public class Route {
 
-    private ArrayList<GpsPoint> route;
+    public Long id;
 
-    public Route(ArrayList<GpsPoint> route){
-        this.route = route;
+    //@Relationship(type="routePoint", direction = Relationship.OUTGOING)
+    public GpsPoint[] route;
+
+    @JsonCreator
+    public Route(){
+
     }
 
-    public ArrayList<GpsPoint> getRoute(){
+    public GpsPoint[] getRoute(){
         return this.route;
+    }
+
+    public void setRoute(GpsPoint[] route){
+        this.route = route;
     }
 
 }
