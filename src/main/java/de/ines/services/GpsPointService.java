@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by Hambe on 16.07.2017.
@@ -38,18 +39,24 @@ public class GpsPointService {
         gpsPointRepository.save(gpsPoint);
     }
 
+    public Iterable<Map<String,Object>> callProcedures(){
+        return gpsPointRepository.findSpatialProcedures();
+    }
+
     public String saveRoute(String jsonRoute){
-        Date startTime = new Date();
 
         User user = userRepository.findByName("Felix");
         if(user == null){
             user = new User("Felix");
         }
-        for(int j = 0; j < 50000; j++){
+
             ObjectMapper mapper = new ObjectMapper();
             Route route = null;
             try {
                 route = mapper.readValue(jsonRoute, Route.class);
+                route.setFirstPoint(route.getRoute()[0]);
+                route.setLastPoint(route.getRoute()[route.getRoute().length-1]);
+                route.setUser(user);
             } catch (Exception e) {
 
                 CharArrayWriter cw = new CharArrayWriter();
@@ -64,23 +71,12 @@ public class GpsPointService {
             for(int i = 0; i < route.getRoute().length; i++){
                 if(i < route.getRoute().length-1){
                     route.getRoute()[i].nextPoint = route.getRoute()[i+1];
-                }else {
-                    route.getRoute()[i].setUser(user);
                 }
-                if(i > 0){
-                    route.getRoute()[i].lastPoint = route.getRoute()[i-1];
-                }else {
 
-                    route.getRoute()[i].setUser(user);
-                }
-                //saveGpsPoint(route.getRoute()[i]);
-            }
                 routeRepository.save(route);
 
         }
 
-        Date endTime = new Date();
-        System.out.println((double)(endTime.getTime()-startTime.getTime())/1000);
         return "Succesfull";
     }
 

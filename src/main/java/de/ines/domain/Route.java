@@ -2,10 +2,8 @@ package de.ines.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Property;
-import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.*;
+import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.ArrayList;
 
@@ -17,12 +15,21 @@ public class Route {
 
     public Long id;
 
-    //@Relationship(type="routePoint", direction = Relationship.OUTGOING)
+    @Transient
     public GpsPoint[] route;
+
+
+    @Relationship(type="firstPoint", direction = Relationship.OUTGOING)
+    private GpsPoint firstPoint;
+
+    @Relationship(type="lastPoint", direction = Relationship.OUTGOING)
+    private GpsPoint lastPoint;
+
+    @Relationship(type="belongs_to", direction = Relationship.OUTGOING)
+    public User user;
 
     @JsonCreator
     public Route(){
-
     }
 
     public GpsPoint[] getRoute(){
@@ -31,6 +38,18 @@ public class Route {
 
     public void setRoute(GpsPoint[] route){
         this.route = route;
+    }
+
+    public void setFirstPoint(GpsPoint firstPoint) {
+        this.firstPoint = firstPoint;
+    }
+
+    public void setLastPoint(GpsPoint lastPoint) {
+        this.lastPoint = lastPoint;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

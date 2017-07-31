@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * Created by Hambe on 16.07.2017.
@@ -32,6 +33,11 @@ public class GpsPointController {
     @RequestMapping(value = "/saveRoute", method = RequestMethod.POST)
     public String saveRoute(@RequestBody String jsonRoute){
         return gpsPointService.saveRoute(jsonRoute);
+    }
+
+    @RequestMapping(value = "/procedures", method = RequestMethod.GET)
+    public Iterable<Map<String,Object>> callProcedures(){
+        return gpsPointService.callProcedures();
     }
 
 

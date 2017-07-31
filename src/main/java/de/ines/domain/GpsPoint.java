@@ -12,14 +12,8 @@ public class GpsPoint {
     @GraphId
     public Long id;
 
-    @Relationship(type="lastPoint", direction = Relationship.INCOMING)
-    public GpsPoint lastPoint;
-
-    @Relationship(type="nextPoint", direction = Relationship.INCOMING)
+    @Relationship(type="nextPoint")
     public GpsPoint nextPoint;
-
-    @Relationship(type="user", direction = Relationship.INCOMING)
-    public User user;
 
     @Property
     public long date;
@@ -43,7 +37,6 @@ public class GpsPoint {
 
 
     @Property
-    @Index
     public int realID;
 
 
@@ -53,12 +46,7 @@ public class GpsPoint {
 
     public GpsPoint(GpsPoint lastPoint, GpsPoint nextPoint, int realID){
         this.nextPoint = nextPoint;
-        this.lastPoint = lastPoint;
         this.realID = realID;
     }
 
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
