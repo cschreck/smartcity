@@ -3,6 +3,9 @@ package de.ines.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ines.domain.Route;
 import de.ines.services.GpsPointService;
+import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.gis.spatial.SpatialDatabaseService;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,15 +27,11 @@ public class GpsPointController {
         this.gpsPointService = gpsPointService;
     }
 
-    @RequestMapping(value = "/id", method = RequestMethod.GET)
-    public int getGPS_PlusByRealID(@RequestParam("id") String id){
 
-        return 10;
-    }
+    @RequestMapping(value = "/{name}/saveRoute", method = RequestMethod.POST)
+    public String saveRoute(@RequestBody String jsonRoute, @PathVariable String name){
+        return gpsPointService.saveRoute(jsonRoute, name);
 
-    @RequestMapping(value = "/saveRoute", method = RequestMethod.POST)
-    public String saveRoute(@RequestBody String jsonRoute){
-        return gpsPointService.saveRoute(jsonRoute);
     }
 
     @RequestMapping(value = "/procedures", method = RequestMethod.GET)

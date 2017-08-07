@@ -33,6 +33,12 @@ public class GpsPoint {
     @Property
     public double acceleration;
 
+    @Property
+    public String uniqueID;
+
+
+
+
 
 
 
@@ -41,7 +47,6 @@ public class GpsPoint {
 
 
     public GpsPoint(){
-
     }
 
     public GpsPoint(GpsPoint lastPoint, GpsPoint nextPoint, int realID){

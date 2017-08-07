@@ -14,10 +14,6 @@ public class User {
     @Property
     public String name;
 
-    @Property
-    String realID;
-
-
     public User(){
 
     }

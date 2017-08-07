@@ -14,6 +14,7 @@ import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by Hambe on 16.07.2017.
@@ -31,23 +32,16 @@ public class GpsPointService {
     @Autowired
     UserRepository userRepository;
 
-    public GpsPoint searchGpsPointByRealID(int realID){
-        return gpsPointRepository.findByRealID(realID);
-    }
-
-    public void saveGpsPoint(GpsPoint gpsPoint){
-        gpsPointRepository.save(gpsPoint);
-    }
 
     public Iterable<Map<String,Object>> callProcedures(){
         return gpsPointRepository.findSpatialProcedures();
     }
 
-    public String saveRoute(String jsonRoute){
+    public String saveRoute(String jsonRoute, String name){
 
-        User user = userRepository.findByName("Felix");
+        User user = userRepository.findByName(name);
         if(user == null){
-            user = new User("Felix");
+            user = new User(name);
         }
 
             ObjectMapper mapper = new ObjectMapper();
@@ -68,14 +62,23 @@ public class GpsPointService {
 
             }
 
+
+
             for(int i = 0; i < route.getRoute().length; i++){
+                GpsPoint gpsPoint = route.getRoute()[i];
+
+                route.getRoute()[i]=gpsPoint;
                 if(i < route.getRoute().length-1){
                     route.getRoute()[i].nextPoint = route.getRoute()[i+1];
                 }
 
-                routeRepository.save(route);
-
         }
+
+            routeRepository.save(route);
+
+            for(int i = 0; i < route.getRoute().length; i++){
+                gpsPointRepository.addGpsPointToIndex(route.getRoute()[i].latitude);
+            }
 
         return "Succesfull";
     }
