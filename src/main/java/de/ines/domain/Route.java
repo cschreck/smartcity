@@ -18,8 +18,9 @@ public class Route {
     @Transient
     public GpsPoint[] route;
 
+    public int routeID;
 
-    @Relationship(type="firstPoint", direction = Relationship.OUTGOING)
+    @Relationship(type="nextPoint", direction = Relationship.OUTGOING)
     private GpsPoint firstPoint;
 
     @Relationship(type="lastPoint", direction = Relationship.OUTGOING)
@@ -50,6 +51,13 @@ public class Route {
 
     public void setUser(User user) {
         this.user = user;
+    }
+    public int getRouteID() {
+        return routeID;
+    }
+
+    public void setRouteID(int routeID) {
+        this.routeID = routeID;
     }
 
 }

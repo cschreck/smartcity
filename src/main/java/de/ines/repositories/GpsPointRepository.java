@@ -23,11 +23,10 @@ public interface GpsPointRepository extends Neo4jRepository<GpsPoint, Long> {
     @Query("CALL spatial.procedures")
     Iterable<Map<String,Object>> findSpatialProcedures();
 
-    @Query("MATCH (n:GpsPoint{latitude:{latitude}}) WITH n call spatial.addNode('GpsPoints', n) YIELD node return node")
-    void addGpsPointToIndex(@Param("latitude") double latitude);
+    @Query("match(n:Route{routeID:{routeID}})-[:nextPoint*]->(g:GpsPoint) with collect( g) as nodes call spatial.addNodes('GpsPoints', nodes) YIELD count return nodes")
+    void addGpsPointToIndex(@Param("routeID") int routeID);
 
-
-    @Query("CALL spatial.")
-    GpsPoint findWithinDistance();
+    @Query("call spatial.withinDistance('GpsPoints',{latitude:{latitude}, longitude:{longitude}},{distance}) YIELD node return node")
+    Iterable<Map<String,Object>> withinDistanceCall(@Param("latitude")double latitude, @Param("longitude")double longitude, @Param("distance")int distance);
 
 }

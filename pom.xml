@@ -64,19 +64,15 @@
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j</artifactId>
-			<version>3.1.2</version>
+			<version>3.1.6</version>
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-spatial</artifactId>
-			<version>0.24-neo4j-3.1.1</version>
-		</dependency>
+
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-graphdb-api</artifactId>
-            <version>3.2.2</version>
+            <version>3.1.6</version>
         </dependency>
 
     </dependencies>

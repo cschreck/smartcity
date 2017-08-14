@@ -1,10 +1,10 @@
 package de.ines.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.ines.domain.GpsPoint;
 import de.ines.domain.Route;
 import de.ines.services.GpsPointService;
 import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.gis.spatial.SpatialDatabaseService;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,5 +39,9 @@ public class GpsPointController {
         return gpsPointService.callProcedures();
     }
 
+    @RequestMapping(value="/withinDistanceCall", method = RequestMethod.GET)
+    public Iterable<Map<String,Object>> withinDistanceCall(@RequestParam(value="latitude")double latitude, @RequestParam(value="longitude")double longitude, @RequestParam(value="distance")int distance){
+        return gpsPointService.withinDistanceCall(latitude, longitude, distance);
+    }
 
 }

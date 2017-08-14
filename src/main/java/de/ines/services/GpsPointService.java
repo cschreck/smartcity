@@ -7,11 +7,15 @@ import de.ines.domain.User;
 import de.ines.repositories.GpsPointRepository;
 import de.ines.repositories.RouteRepository;
 import de.ines.repositories.UserRepository;
+import org.neo4j.ogm.session.Session;
+import org.neo4j.ogm.session.SessionFactory;
+import org.neo4j.ogm.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Random;
@@ -32,12 +36,18 @@ public class GpsPointService {
     @Autowired
     UserRepository userRepository;
 
+    SessionFactory sessionFactory;
+
+    int id = 0;
+
 
     public Iterable<Map<String,Object>> callProcedures(){
         return gpsPointRepository.findSpatialProcedures();
     }
 
     public String saveRoute(String jsonRoute, String name){
+
+        sessionFactory = new SessionFactory("de.ines.domain");
 
         User user = userRepository.findByName(name);
         if(user == null){
@@ -74,13 +84,17 @@ public class GpsPointService {
 
         }
 
-            routeRepository.save(route);
+        routeRepository.save(route);
+        System.out.println(route.getRoute().length);
+        Session session = sessionFactory.openSession();
 
-            for(int i = 0; i < route.getRoute().length; i++){
-                gpsPointRepository.addGpsPointToIndex(route.getRoute()[i].latitude);
-            }
+        session.query("MATCH path = (GpsPoint:GpsPoint{latitude:"+route.getRoute()[0].latitude+"})-[:nextPoint*"+(route.getRoute().length-1)+"]->() UNWIND nodes(path) as n with collect(n) as nodes call spatial.addNodes('GpsPoints',nodes) YIELD count return nodes", Collections.EMPTY_MAP);
 
         return "Succesfull";
+    }
+
+    public Iterable<Map<String,Object>> withinDistanceCall(double latitude, double longitude, int distance){
+        return gpsPointRepository.withinDistanceCall(latitude, longitude, distance);
     }
 
 
