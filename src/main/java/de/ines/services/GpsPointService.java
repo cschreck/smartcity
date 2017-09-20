@@ -10,22 +10,35 @@ import de.ines.repositories.UserRepository;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.neo4j.ogm.transaction.Transaction;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.Random;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Created by Hambe on 16.07.2017.
  */
 
 @Service
-public class GpsPointService {
+public class GpsPointService{
+
+    CachingConnectionFactory test = new CachingConnectionFactory();
+    public ConnectionFactory connectionFactory;
+    public AmqpTemplate template;
+
 
     @Autowired
     GpsPointRepository gpsPointRepository;
@@ -36,9 +49,12 @@ public class GpsPointService {
     @Autowired
     UserRepository userRepository;
 
+
+
     SessionFactory sessionFactory;
 
-    int id = 0;
+
+
 
 
     public Iterable<Map<String,Object>> callProcedures(){
@@ -46,13 +62,12 @@ public class GpsPointService {
     }
 
     public String saveRoute(String jsonRoute, String name){
-
         sessionFactory = new SessionFactory("de.ines.domain");
 
-        User user = userRepository.findByName(name);
+        /*User user = userRepository.findByName(name);
         if(user == null){
             user = new User(name);
-        }
+        }*/
 
             ObjectMapper mapper = new ObjectMapper();
             Route route = null;
@@ -60,7 +75,7 @@ public class GpsPointService {
                 route = mapper.readValue(jsonRoute, Route.class);
                 route.setFirstPoint(route.getRoute()[0]);
                 route.setLastPoint(route.getRoute()[route.getRoute().length-1]);
-                route.setUser(user);
+                //route.setUser(user);
             } catch (Exception e) {
 
                 CharArrayWriter cw = new CharArrayWriter();
@@ -84,11 +99,23 @@ public class GpsPointService {
 
         }
 
-        routeRepository.save(route);
-        System.out.println(route.getRoute().length);
+        //routeRepository.save(route);
         Session session = sessionFactory.openSession();
 
-        session.query("MATCH path = (GpsPoint:GpsPoint{latitude:"+route.getRoute()[0].latitude+"})-[:nextPoint*"+(route.getRoute().length-1)+"]->() UNWIND nodes(path) as n with collect(n) as nodes call spatial.addNodes('GpsPoints',nodes) YIELD count return nodes", Collections.EMPTY_MAP);
+        ArrayList<GpsPoint> gpsPoints = new ArrayList<GpsPoint>();
+        for(int i = 0; i<route.getRoute().length; i++){
+            route.getRoute()[i].nextPoint = null;
+            gpsPoints.add(route.getRoute()[i]);
+        }
+
+
+
+
+
+
+        template.convertAndSend("myqueue2",route);
+        //Route r = (Route)template.receiveAndConvert("myqueue2");
+
 
         return "Succesfull";
     }

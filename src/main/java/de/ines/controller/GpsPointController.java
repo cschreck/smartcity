@@ -6,6 +6,9 @@ import de.ines.domain.Route;
 import de.ines.services.GpsPointService;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,11 +23,19 @@ import java.util.Map;
 @RestController
 public class GpsPointController {
 
+
     final GpsPointService gpsPointService;
 
     @Autowired
     public GpsPointController(GpsPointService gpsPointService) {
         this.gpsPointService = gpsPointService;
+        CachingConnectionFactory test = new CachingConnectionFactory();
+        test.setHost("127.0.0.1");
+        test.setPassword("guest");
+        gpsPointService.connectionFactory = test;
+        RabbitTemplate t = new RabbitTemplate(gpsPointService.connectionFactory);
+        t.setMessageConverter(new Jackson2JsonMessageConverter());
+        gpsPointService.template = t;
     }
 
 
